@@ -1,0 +1,74 @@
+import API from 'api';
+import React, { createContext, useCallback, useState } from 'react';
+
+export const TFUContext = createContext({});
+
+const TFUProvider = (props) => {
+  const [dataTFU, setDataTFU] = useState({});
+  const [dataTFUAssesment, setDataTFUAssesment] = useState({});
+  const [tfus, setTfus] = useState([]);
+  const [tfuAssesments, setTfuAssesments] = useState([]);
+
+  const getDataTFUAssesment = useCallback(async (id, params) => {
+    await API.getOneTFUAssement(id, params)
+      .then((res) => {
+        const { data } = res.data;
+
+        // console.log('data', data);
+        setDataTFUAssesment(data);
+      })
+      .catch((err) => console.log('err data tfu', err));
+  }, []);
+
+  const getDataTFU = useCallback(async (id, params) => {
+    await API.getOneTFU(id, params)
+      .then((res) => {
+        const { data } = res.data;
+
+        // console.log('data', data);
+        setDataTFU(data);
+      })
+      .catch((err) => console.log('err data tfu', err));
+  }, []);
+
+  const getTFUAssements = useCallback(async (params) => {
+    await API.getTFUAssements(params)
+      .then((res) => {
+        const { data } = res.data;
+
+        // console.log('data', data);
+        setTfuAssesments(data);
+      })
+      .catch((err) => console.log('err data tfu', err));
+  }, []);
+
+  const getTFUs = useCallback(async (params) => {
+    await API.getTFUs(params)
+      .then((res) => {
+        const { data } = res.data;
+
+        // console.log('data', data);
+        setTfus(data);
+      })
+      .catch((err) => console.log('err data tfu', err));
+  }, []);
+
+  return (
+    <TFUContext.Provider
+      value={{
+        dataTFU,
+        tfus,
+        tfuAssesments,
+        dataTFUAssesment,
+
+        getDataTFUAssesment,
+        getDataTFU,
+        getTFUs,
+        getTFUAssements
+      }}
+      {...props}
+    />
+  );
+};
+
+export default TFUProvider;
