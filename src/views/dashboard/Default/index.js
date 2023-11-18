@@ -125,7 +125,7 @@ const Dashboard = () => {
 
           // healthy house dashboard
           const dataCardSanitary = [
-            { name: 'Jumlah Sanitasi', data: data.sanitary?.totalSanitary },
+            { name: 'Jumlah Pasien', data: data.sanitary?.totalSanitary },
             { name: 'Jumlah Jenis Penyakit', data: data.sanitary?.byType },
             { name: 'Jumlah Konseling', data: data.sanitary?.byCounseling }
           ];
@@ -168,98 +168,6 @@ const Dashboard = () => {
 
   return (
     <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item xs={12}>
-            <TitleCard
-              title="Tempat Fasilitas Umum"
-              icon={<IconBuildingCommunity size={52} />}
-            />
-          </Grid>
-          {/* <Grid item xs={12} sm={6}>
-            <Card sx={{ p: 2 }}>
-              <Stack
-                sx={{ minHeight: 180, pb: 3 }}
-                justifyContent="space-between"
-              >
-                <Stack gap={0.5}>
-                  <Typography variant="h5">Realisasi Capaian</Typography>
-                  <Typography variant="caption">
-                    CAPAIAN TFU YANG DILAKUKAN PENGAWASAN SESUAI STANDAR (IKL)
-                  </Typography>
-                </Stack>
-                <Stack gap={2}>
-                  <Typography textAlign="center" variant="h1">
-                    90%
-                  </Typography>
-                  <BorderLinearProgress variant="determinate" value={90} />
-                </Stack>
-              </Stack>
-            </Card>
-          </Grid> */}
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {dataTFU.card.map((item, index) => (
-                <Grid item xs={3} key={index}>
-                  <StatusCard
-                    value={item.data}
-                    icon={<IconCheckupList size={64} />}
-                    description={item.name}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item xs={12}>
-            <TotalGrowthBarChart
-              title="Grafik TFU"
-              data={dataTFU.chartData}
-              isLoading={isLoading}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {/* TPP */}
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item xs={12}>
-            <TitleCard
-              title="Tempat Pengolahan Pangan"
-              icon={<IconBuildingCommunity size={52} />}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {dataTPP.card.map((item, index) => (
-                <Grid item xs={3} key={index}>
-                  <StatusCard
-                    value={item.data}
-                    icon={<IconCheckupList size={64} />}
-                    description={item.name}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item xs={12}>
-            <TotalGrowthBarChart
-              title="Grafik"
-              data={dataTPP.chartData}
-              isLoading={isLoading}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-
       {/* Water */}
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
@@ -332,7 +240,99 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Healthy House */}
+      {/* TPP */}
+      <Grid item xs={12}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12}>
+            <TitleCard
+              title="Tempat Pengolahan Pangan"
+              icon={<IconBuildingCommunity size={52} />}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              {dataTPP.card.map((item, index) => (
+                <Grid item xs={3} key={index}>
+                  <StatusCard
+                    value={item.data}
+                    icon={<IconCheckupList size={64} />}
+                    description={item.name}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12}>
+            <TotalGrowthBarChart
+              title="Grafik"
+              data={dataTPP.chartData}
+              isLoading={isLoading}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12}>
+            <TitleCard
+              title="Tempat Fasilitas Umum"
+              icon={<IconBuildingCommunity size={52} />}
+            />
+          </Grid>
+          {/* <Grid item xs={12} sm={6}>
+            <Card sx={{ p: 2 }}>
+              <Stack
+                sx={{ minHeight: 180, pb: 3 }}
+                justifyContent="space-between"
+              >
+                <Stack gap={0.5}>
+                  <Typography variant="h5">Realisasi Capaian</Typography>
+                  <Typography variant="caption">
+                    CAPAIAN TFU YANG DILAKUKAN PENGAWASAN SESUAI STANDAR (IKL)
+                  </Typography>
+                </Stack>
+                <Stack gap={2}>
+                  <Typography textAlign="center" variant="h1">
+                    90%
+                  </Typography>
+                  <BorderLinearProgress variant="determinate" value={90} />
+                </Stack>
+              </Stack>
+            </Card>
+          </Grid> */}
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              {dataTFU.card.map((item, index) => (
+                <Grid item xs={3} key={index}>
+                  <StatusCard
+                    value={item.data}
+                    icon={<IconCheckupList size={64} />}
+                    description={item.name}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid container spacing={gridSpacing}>
+          <Grid item xs={12}>
+            <TotalGrowthBarChart
+              title="Grafik TFU"
+              data={dataTFU.chartData}
+              isLoading={isLoading}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+
+      {/* Sanitary */}
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12}>

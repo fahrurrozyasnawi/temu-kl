@@ -172,6 +172,13 @@ const getDataArea = (params) => api.get('/area', { params });
 // dashboard
 const getDashboard = (params) => api.get('/dashboard', { params });
 
+// reports
+const getReports = (params) => api.get(`/report`, { params });
+const getOneReport = (id, params) => api.get(`/report/${id}`, { params });
+const postReport = (data, params) => api.post('/report', data, { params });
+const putReport = (id, data) => api.put(`/report/${id}`, data);
+const deleteReport = (id) => api.delete(`/report/${id}`);
+
 const API = {
   getDataArea,
   getDashboard,
@@ -259,7 +266,13 @@ const API = {
   postDocument,
   putDocument,
   deleteDocument,
-  uploadDocument
+  uploadDocument,
+
+  getReports,
+  getOneReport,
+  postReport,
+  putReport,
+  deleteReport
 };
 
 export default API;

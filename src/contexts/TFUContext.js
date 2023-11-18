@@ -8,6 +8,7 @@ const TFUProvider = (props) => {
   const [dataTFUAssesment, setDataTFUAssesment] = useState({});
   const [tfus, setTfus] = useState([]);
   const [tfuAssesments, setTfuAssesments] = useState([]);
+  const [reports, setReports] = useState([]);
 
   const getDataTFUAssesment = useCallback(async (id, params) => {
     await API.getOneTFUAssement(id, params)
@@ -53,6 +54,17 @@ const TFUProvider = (props) => {
       .catch((err) => console.log('err data tfu', err));
   }, []);
 
+  const getReports = useCallback(async (params) => {
+    await API.getReports(params)
+      .then((res) => {
+        const { data } = res.data;
+
+        // console.log('data', data);
+        setReports(data);
+      })
+      .catch((err) => console.log('err data tfu', err));
+  }, []);
+
   return (
     <TFUContext.Provider
       value={{
@@ -60,7 +72,9 @@ const TFUProvider = (props) => {
         tfus,
         tfuAssesments,
         dataTFUAssesment,
+        reports,
 
+        getReports,
         getDataTFUAssesment,
         getDataTFU,
         getTFUs,

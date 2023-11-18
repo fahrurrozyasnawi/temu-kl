@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
-import { ButtonBase } from '@mui/material';
+import { ButtonBase, Typography } from '@mui/material';
 
 // project imports
 import config from 'config';
@@ -22,6 +22,9 @@ const LogoSection = () => {
       to={config.defaultPath}
     >
       <Logo />
+      <Typography variant="h3" sx={{ ml: 2 }}>
+        TEMU-KL
+      </Typography>
     </ButtonBase>
   );
 };

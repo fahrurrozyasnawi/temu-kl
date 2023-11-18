@@ -14,10 +14,10 @@ import sanitary from './sanitary';
 const menuItems = {
   items: [
     dashboard,
-    tfu,
-    tpp,
-    healthyHouse,
     water,
+    healthyHouse,
+    tpp,
+    tfu,
     sanitary,
     masterData
     // utilities,

@@ -191,6 +191,7 @@ const OnlineAssesment = () => {
                       // {...register('sentraType')}
                       name={register('sentraType').name}
                       ref={register('sentraType').ref}
+                      onBlur={register('sentraType').onBlur}
                       select
                       label="Jenis Sentra"
                       fullWidth
@@ -520,7 +521,7 @@ const calculateScore = (data, score) => {
   for (const item of data) {
     if (item && typeof item === 'object') {
       for (const [key, value] of Object.entries(item)) {
-        if (value === 'Ya') {
+        if (value === 'Tidak') {
           score = score + item.score;
         }
         if (key === 'children' && Array.isArray(item.children)) {

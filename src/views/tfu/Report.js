@@ -9,18 +9,74 @@ import {
   Typography
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import CustomTable from 'ui-component/sections/customTable';
 import ColumnHelperReport from 'ui-component/tfu/columnHelperReport';
 import FormAddReport from 'ui-component/tfu/formAddReport';
+import { TFUContext } from 'contexts/TFUContext';
+import API from 'api';
+import { toast } from 'react-hot-toast';
+import DeleteDialog from 'ui-component/components/deleteDialog';
+import { AuthContext } from 'contexts/AuthContext';
 
 const Report = () => {
-  const [openFormAdd, setOpenFormAdd] = useState(false);
+  // context
+  const { reports, getReports } = useContext(TFUContext);
+  const { dataUser } = useContext(AuthContext);
 
-  const handleCloseFormAdd = () => {
+  const [openFormAdd, setOpenFormAdd] = useState(false);
+  const [updateState, setUpdateState] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    text: '',
+    id: ''
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getReports({ type: 'tfu' });
+    };
+
+    fetchData();
+  }, [updateState]);
+
+  const handleClose = () => {
     setOpenFormAdd(false);
+    setDeleteModal((prev) => ({ ...prev, open: false, text: '', id: '' }));
   };
 
+  const handleClickAction = (type, row) => {
+    switch (type) {
+      case 'offline':
+        navigate(`/tfu/assesment/offline/${row.type}/${row._id}`);
+        break;
+      case 'online':
+        navigate(`/tfu/assesment/online/${row.type}/${row._id}`);
+        break;
+      case 'delete':
+        console.log('delete click');
+        setDeleteModal({ open: true, text: row.name, id: row._id });
+        break;
+      default:
+        return;
+    }
+  };
+
+  const onDelete = async (id) => {
+    await API.deleteReport(id)
+      .then((res) => {
+        toast.success('Data telah dihapus');
+        setUpdateState((prev) => !prev);
+        handleClose();
+      })
+      .catch((err) => {
+        console.log('err', err);
+        toast.error('Terjadi kesalahan, silahkan coba lagi!!');
+      });
+  };
+
+  console.log('data user', dataUser);
+  console.log('data report', reports);
   return (
     <Fragment>
       <Card sx={{ p: 3 }}>
@@ -56,13 +112,30 @@ const Report = () => {
             </Stack>
           </Grid>
           <Grid item xs={12}>
-            <CustomTable data={_data} columns={ColumnHelperReport({})} />
+            <CustomTable
+              data={_data}
+              columns={ColumnHelperReport({
+                onAction: handleClickAction,
+                permissions: dataUser?.permissions
+              })}
+            />
           </Grid>
         </Grid>
       </Card>
 
       {/* Dialog */}
-      <FormAddReport open={openFormAdd} onClose={handleCloseFormAdd} />
+      <FormAddReport
+        updateState={setUpdateState}
+        open={openFormAdd}
+        onClose={handleClose}
+      />
+
+      <DeleteDialog
+        open={deleteModal.open}
+        text={deleteModal.text}
+        onClose={handleClose}
+        onDelete={() => onDelete(deleteModal.id)}
+      />
     </Fragment>
   );
 };

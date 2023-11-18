@@ -36,6 +36,8 @@ const ColumnHelper = (callback) => [
     cell: (info) => {
       let color = 'grey';
       const value = info.getValue().toLowerCase();
+      // const value = info.getValue();
+      // console.log('value', value);
 
       switch (value) {
         case 'resiko rendah':

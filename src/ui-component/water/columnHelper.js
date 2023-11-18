@@ -37,6 +37,10 @@ const ColumnHelper = (callback) => [
       let color = 'grey';
       const value = info.getValue();
 
+      if (!value) {
+        return '-';
+      }
+
       switch (value) {
         case 'Resiko Rendah':
         case 'Baik':
@@ -54,9 +58,7 @@ const ColumnHelper = (callback) => [
         default:
           break;
       }
-      if (!value) {
-        return '-';
-      }
+
       return (
         <Button variant="contained" color={color} sx={{ fontSize: 11 }}>
           {value}

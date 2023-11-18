@@ -4,6 +4,8 @@ import {
   Button,
   Dialog,
   Grid,
+  IconButton,
+  InputAdornment,
   MenuItem,
   Stack,
   TextField,
@@ -20,6 +22,7 @@ import * as Yup from 'yup';
 import { toast } from 'react-hot-toast';
 import CustomTextField from 'ui-component/components/forms/CustomTextField';
 import { MasterDataContext } from 'contexts/MasterData';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const FormAdd = ({
   open,
@@ -64,6 +67,14 @@ const FormAdd = ({
     district: [],
     ward: []
   });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   // use effect
   useEffect(() => {
@@ -264,9 +275,23 @@ const FormAdd = ({
                   <TextField
                     disabled={preview}
                     label="Password"
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     fullWidth
                     {...register('password', { required: true })}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      )
+                    }}
                   />
                 </Grid>
               ) : null
@@ -408,7 +433,9 @@ const userAccess = [
     label: 'Kader',
     value: 'cadre',
     exclude: [
+      'user:all',
       'user:add',
+      'user:activate',
       'user:delete',
       'user:edit',
       'puskesmas:add',
@@ -421,7 +448,8 @@ const userAccess = [
       'tpp:all',
       'water:all',
       'hh:all',
-      'sanitary:all'
+      'sanitary:all',
+      'report:delete'
     ]
   }
 ];

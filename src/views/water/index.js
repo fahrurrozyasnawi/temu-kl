@@ -4,7 +4,7 @@ import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DeleteDialog from 'ui-component/components/deleteDialog';
 import AddSections from 'ui-component/sections/AddSections';
-import ColumnHelper from 'ui-component/healthyHouse/columnHelper';
+import ColumnHelper from 'ui-component/water/columnHelper';
 import CustomTable from 'ui-component/sections/customTable';
 import FormAdd from 'ui-component/healthyHouse/formAdd';
 import AssesmentOffline from './AssesmentOffline';

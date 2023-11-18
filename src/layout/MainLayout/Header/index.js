@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Box, ButtonBase } from '@mui/material';
+import { Avatar, Box, ButtonBase, Stack, Typography } from '@mui/material';
 
 // project imports
 import LogoSection from '../LogoSection';
@@ -32,10 +32,17 @@ const Header = ({ handleLeftDrawerToggle }) => {
       >
         <Box
           component="span"
-          sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            flexGrow: 1
+          }}
         >
           <LogoSection />
         </Box>
+        {/* <Stack direction="row" gap={2} justifyContent="space-between">
+          <LogoSection />
+          <Typography variant="h5">TEMU-KL</Typography>
+        </Stack> */}
         <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
           <Avatar
             variant="rounded"

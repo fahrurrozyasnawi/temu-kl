@@ -8,6 +8,18 @@ const TPPProvider = (props) => {
   const [dataTPPAssesment, setDataTPPAssesment] = useState({});
   const [tpps, setTpps] = useState([]);
   const [tppAssesments, setTppAssesments] = useState([]);
+  const [reports, setReports] = useState([]);
+
+  const getReports = useCallback(async (params) => {
+    await API.getReports(params)
+      .then((res) => {
+        const { data } = res.data;
+
+        // console.log('data', data);
+        setReports(data);
+      })
+      .catch((err) => console.log('err data tfu', err));
+  }, []);
 
   const getDataTPPAssesment = useCallback(async (id, params) => {
     await API.getOneTPPAssement(id, params)
@@ -60,7 +72,9 @@ const TPPProvider = (props) => {
         tpps,
         tppAssesments,
         dataTPPAssesment,
+        reports,
 
+        getReports,
         getDataTPPAssesment,
         getDataTPP,
         getTPPs,

@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Autocomplete,
   Box,
@@ -9,50 +10,212 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import React from 'react';
+import { AuthContext } from 'contexts/AuthContext';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+import { toast } from 'react-hot-toast';
+import { useForm } from 'react-hook-form';
+import API from 'api';
+import CustomAutocomplete from 'ui-component/components/forms/CustomAutocomplete';
+import CustomDatePicker from 'ui-component/components/forms/CustomDatePicker';
 
-const FormAddReport = ({ open, onClose }) => {
+const FormAddReport = ({ open, onClose, updateState }) => {
+  // context
+  const { dataUser } = useContext(AuthContext);
+
+  const initialValues = {
+    name: '',
+    type: 'tpp',
+    report: null
+  };
+
+  // state
+  const [areas, setAreas] = useState({
+    province: [],
+    region: [],
+    district: [],
+    ward: []
+  });
+
+  const {
+    register,
+    control,
+    setValue,
+    reset,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    defaultValues: initialValues
+  });
+
+  // use effect
+  useEffect(() => {
+    const fetchData = async () => {
+      let data = areas;
+
+      try {
+        data = (
+          await API.getDataArea({ level: 2, parent: dataUser?.province?.kode })
+        ).data?.data?.map((i) => ({
+          kode: i.kode,
+          nama: i.nama
+        }));
+        // console.log('data', data);
+        setAreas((prev) => ({
+          ...prev,
+          region: data
+        }));
+
+        // setValue
+        setValue('report.province', dataUser?.province);
+        // setValue('report.region', dataUser?.region);
+        // setValue('report.district', dataUser?.district);
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    fetchData();
+  }, [dataUser]);
+
+  const onSubmit = async (values) => {
+    console.log('values', values);
+
+    await API.postReport(values)
+      .then(() => {
+        toast.success('Berhasil menambah data');
+        updateState((prev) => !prev);
+        reset();
+        onClose();
+      })
+      .catch((err) => {
+        console.log('err post report', err);
+        toast.error('Terjadi kesalahan, silahkan dicoba beberapa saat lagi');
+      });
+  };
+
+  const handleDataArea = async (type, value) => {
+    if (type === 'prov') {
+      const kode = value?.kode;
+      const data = (
+        await API.getDataArea({ level: 2, parent: kode })
+      ).data.data.map((i) => ({
+        kode: i.kode,
+        nama: i.nama
+      }));
+
+      setAreas((prev) => ({
+        ...prev,
+        region: data,
+        district: [],
+        ward: []
+      }));
+
+      setValue('report.province', value);
+      setValue('report.region', null);
+      setValue('report.district', null);
+      setValue('report.ward', null);
+    }
+
+    if (type === 'kab') {
+      const kode = value?.kode;
+      const data = (
+        await API.getDataArea({ level: 3, parent: kode })
+      ).data.data.map((i) => ({
+        kode: i.kode,
+        nama: i.nama
+      }));
+
+      setAreas((prev) => ({
+        ...prev,
+        district: data,
+        ward: []
+      }));
+
+      setValue('report.region', value);
+      setValue('report.district', null);
+      setValue('report.ward', null);
+    }
+
+    if (type === 'kec') {
+      const kode = value?.kode;
+      const data = (
+        await API.getDataArea({ level: 4, parent: kode })
+      ).data.data.map((i) => ({
+        kode: i.kode,
+        nama: i.nama
+      }));
+
+      setAreas((prev) => ({ ...prev, ward: data }));
+      setValue('report.district', value);
+      setValue('report.ward', null);
+    }
+
+    if (type === 'kel') {
+      setValue('report.ward', value);
+    }
+  };
   return (
     <Dialog open={open}>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={{ p: 3 }}>
           <Typography mb={2} variant="h4">
             Buat Report
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField label="Periode Rekap" fullWidth name="period" />
-            </Grid>
-            <Grid item xs={6}>
-              <Autocomplete
-                freeSolo
-                renderInput={(params) => (
-                  <TextField {...params} label="Provinsi" />
-                )}
+              <CustomDatePicker
+                label="Periode"
+                name="report.period"
+                format="dd/MM/yyyy"
+                control={control}
               />
             </Grid>
             <Grid item xs={6}>
-              <Autocomplete
+              <CustomAutocomplete
+                disabled={true}
                 freeSolo
-                renderInput={(params) => (
-                  <TextField {...params} label="Kabupaten/Kota" />
-                )}
+                label="Provinsi"
+                name="report.province"
+                control={control}
+                options={areas.province}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('prov', newValue)}
               />
             </Grid>
             <Grid item xs={6}>
-              <Autocomplete
+              <CustomAutocomplete
+                // disabled={true}
                 freeSolo
-                renderInput={(params) => (
-                  <TextField {...params} label="Kecamatan" />
-                )}
+                label="Kabupaten/Kota"
+                name="report.region"
+                control={control}
+                options={areas.region}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('kab', newValue)}
               />
             </Grid>
             <Grid item xs={6}>
-              <Autocomplete
+              <CustomAutocomplete
+                // disabled={true}
                 freeSolo
-                renderInput={(params) => (
-                  <TextField {...params} label="Kelurahan" />
-                )}
+                label="Kecamatan"
+                name="report.district"
+                control={control}
+                options={areas.district}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('kec', newValue)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomAutocomplete
+                freeSolo
+                label="Kelurahan/Desa"
+                name="report.ward"
+                control={control}
+                options={areas.ward}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('kel', newValue)}
               />
             </Grid>
             <Grid item xs={6}>
@@ -61,13 +224,39 @@ const FormAddReport = ({ open, onClose }) => {
                   <Typography variant="h6">Mengetahui</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Jabatan" name="position" />
+                  <TextField
+                    fullWidth
+                    label="Jabatan"
+                    {...register('report.discover.occupation', {
+                      required: true
+                    })}
+                    // error={errors.report}
+                    // helperText={errors.report}
+                    // error={errors.report?.discover?.occupation}
+                    // helperText={errors.report?.discover?.occupation}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Nama" name="name" />
+                  <TextField
+                    fullWidth
+                    label="Nama"
+                    {...register('report.discover.name', { required: true })}
+                    // error={errors.report}
+                    // helperText={errors.report}
+                    // error={errors.report?.discover?.name}
+                    // helperText={errors.report?.discover?.name}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="NIP" name="empId" />
+                  <TextField
+                    fullWidth
+                    label="NIP"
+                    {...register('report.discover.empId', { required: true })}
+                    // error={errors.report}
+                    // helperText={errors.report}
+                    // error={errors.report?.discover?.empId}
+                    // helperText={errors.report?.discover?.empId}
+                  />
                 </Grid>
               </Grid>
             </Grid>
@@ -78,13 +267,39 @@ const FormAddReport = ({ open, onClose }) => {
                   <Typography variant="h6">Dibuat Oleh</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Jabatan" name="position" />
+                  <TextField
+                    fullWidth
+                    label="Jabatan"
+                    {...register('report.reporter.occupation', {
+                      required: true
+                    })}
+                    // error={errors.report}
+                    // helperText={errors.report}
+                    // error={errors.report?.reporter?.occupation}
+                    // helperText={errors.report?.reporter?.occupation}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Nama" name="name" />
+                  <TextField
+                    fullWidth
+                    label="Nama"
+                    {...register('report.reporter.name', { required: true })}
+                    // error={errors.report}
+                    // helperText={errors.report}
+                    // error={errors.report?.reporter?.name}
+                    // helperText={errors.report?.reporter?.name}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="NIP" name="empId" />
+                  <TextField
+                    fullWidth
+                    label="NIP"
+                    {...register('report.reporter.empId', { required: true })}
+                    // error={errors.report}
+                    // helperText={errors.report}
+                    // error={errors.report?.reporter?.empId}
+                    // helperText={errors.report?.reporter?.empId}
+                  />
                 </Grid>
               </Grid>
             </Grid>

@@ -155,7 +155,8 @@ const Users = () => {
             columns={ColumnHelperUsers({
               onAction: handleClickAction,
               setUpdateState: setUpdateState,
-              userPermission: dataUser?.permissions
+              userPermission: dataUser?.permissions,
+              listUserAccess: userAccess
             })}
           />
         </Card>
@@ -188,6 +189,18 @@ const options = [
   { name: 'Kecamatan', value: 'district.nama' },
   { name: 'Desa Kelurahan', value: 'ward.nama' },
   { name: 'Level Akun', value: 'level' }
+];
+
+const userAccess = [
+  { label: 'Admin', value: 'admin' },
+  {
+    label: 'Putugas Psukesmas',
+    value: 'healthworker'
+  },
+  {
+    label: 'Kader',
+    value: 'cadre'
+  }
 ];
 
 export default Users;

@@ -31,17 +31,10 @@ const tpp = {
       icon: icons.IconClipboardText,
       children: [
         {
-          id: 'report-recap',
-          title: 'Rekapitulasi TPP',
-          type: 'item',
-          url: '/tpp/report',
-          breadcrumbs: false
-        },
-        {
           id: 'report',
           title: 'Rekapitulasi',
           type: 'item',
-          url: '/tpp/report/recap',
+          url: '/tpp/report',
           breadcrumbs: false
         }
       ]

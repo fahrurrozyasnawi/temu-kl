@@ -760,7 +760,7 @@ export const tppAssesmentsOwnerFood = [
     children: [
       {
         name: 'Lokasi bebas banjir',
-        score: 1,
+        score: 3,
         value: ''
       },
       {
@@ -770,7 +770,7 @@ export const tppAssesmentsOwnerFood = [
       },
       {
         name: 'Lokasi bebas dari sumber vektor dan binatang pembawa penyakit',
-        score: 3,
+        score: 1,
         value: ''
       }
     ]
@@ -795,7 +795,7 @@ export const tppAssesmentsOwnerFood = [
       },
       {
         name: 'Memiliki tempat sampah:',
-        score: 3,
+        score: 1,
         isCanDisabled: true,
         value: '',
         children: [

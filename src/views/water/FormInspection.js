@@ -298,7 +298,7 @@ const FormInspection = () => {
                     />
                   </CustomRadioGroup>
 
-                  {getValues('waterAvailable.value') === 'Ya' && (
+                  {getValues('waterAvailable.value') === 'Tidak' && (
                     <CustomRadioGroup
                       disabled={layoutMode === 'view'}
                       label="Jika TIDAK, sebutkan alasannya?"

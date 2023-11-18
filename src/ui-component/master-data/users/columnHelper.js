@@ -44,7 +44,17 @@ const ColumnHelperUsers = (callback) => [
     header: 'Desa/Kelurahan'
   }),
   columnHelper.accessor('level', {
-    header: 'Level Akun'
+    header: 'Level Akun',
+    cell: (info) => {
+      const value = info.getValue();
+      const { listUserAccess } = callback;
+
+      if (!value) return '-';
+
+      const label = listUserAccess.find((i) => i.value === value)?.label;
+
+      return label;
+    }
   }),
   columnHelper.accessor('status', {
     cell: (info) => {

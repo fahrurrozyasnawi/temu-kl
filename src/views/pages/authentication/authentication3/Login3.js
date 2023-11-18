@@ -42,10 +42,19 @@ const Login = () => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Grid item sx={{ mb: 3 }}>
+                  <Grid item>
                     <Link to="#">
                       <Logo />
                     </Link>
+                  </Grid>
+                  <Grid item xs={12} sx={{ mb: 3 }}>
+                    <Typography
+                      color={theme.palette.secondary.main}
+                      variant="h2"
+                      textAlign="center"
+                    >
+                      TEMU-KL
+                    </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Grid

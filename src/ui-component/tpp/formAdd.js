@@ -37,6 +37,12 @@ const FormAdd = ({
     name: data?.name || '',
     type: data?.type || '', // jenis (Depot, Gerai pangan, dll)
     address: data?.address || '',
+    addressData: {
+      province: dataUser?.province || null,
+      region: dataUser?.region || null,
+      district: dataUser?.district || null,
+      ward: data?.ward || null
+    },
     owner: data?.owner || '', // pengelola/pemilik/penanggung jawab
     nHandler: data?.nHandler || '', // jumlah penjamah pangan
 
@@ -175,6 +181,68 @@ const FormAdd = ({
     setValue('type', value);
   };
 
+  const handleDataArea = async (type, value) => {
+    if (type === 'prov') {
+      const kode = value?.kode;
+      const data = (
+        await API.getDataArea({ level: 2, parent: kode })
+      ).data.data.map((i) => ({
+        kode: i.kode,
+        nama: i.nama
+      }));
+
+      setAreas((prev) => ({
+        ...prev,
+        region: data,
+        district: [],
+        ward: []
+      }));
+
+      setValue('addressData.province', value);
+      setValue('addressData.region', null);
+      setValue('addressData.district', null);
+      setValue('addressData.ward', null);
+    }
+
+    if (type === 'kab') {
+      const kode = value?.kode;
+      const data = (
+        await API.getDataArea({ level: 3, parent: kode })
+      ).data.data.map((i) => ({
+        kode: i.kode,
+        nama: i.nama
+      }));
+
+      setAreas((prev) => ({
+        ...prev,
+        district: data,
+        ward: []
+      }));
+
+      setValue('addressData.region', value);
+      setValue('addressData.district', null);
+      setValue('addressData.ward', null);
+    }
+
+    if (type === 'kec') {
+      const kode = value?.kode;
+      const data = (
+        await API.getDataArea({ level: 4, parent: kode })
+      ).data.data.map((i) => ({
+        kode: i.kode,
+        nama: i.nama
+      }));
+
+      setAreas((prev) => ({ ...prev, ward: data }));
+      setValue('addressData.district', value);
+      setValue('addressData.ward', null);
+    }
+
+    if (type === 'kel') {
+      setValue('addressData.ward', value);
+    }
+  };
+
   // console.log('get values', watch('type'));
 
   return (
@@ -226,6 +294,55 @@ const FormAdd = ({
                 {...register('name')}
                 error={errors.name?.message}
                 helperText={errors.name?.message}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <CustomAutocomplete
+                disabled={true}
+                freeSolo
+                label="Provinsi"
+                name="addressData.province"
+                control={control}
+                options={areas.province}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('prov', newValue)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomAutocomplete
+                disabled={true}
+                freeSolo
+                label="Kabupaten/Kota"
+                name="addressData.region"
+                control={control}
+                options={areas.region}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('kab', newValue)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomAutocomplete
+                disabled={true}
+                freeSolo
+                label="Kecamatan"
+                name="addressData.district"
+                control={control}
+                options={areas.district}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('kec', newValue)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <CustomAutocomplete
+                disabled={preview}
+                freeSolo
+                label="Kelurahan/Desa"
+                name="addressData.ward"
+                control={control}
+                options={areas.ward}
+                getOptionLabel={(option) => option.nama}
+                onChange={(e, newValue) => handleDataArea('kel', newValue)}
               />
             </Grid>
 

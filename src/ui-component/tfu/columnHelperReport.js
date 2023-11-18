@@ -15,6 +15,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import moment from 'moment';
+import { filterActionButtons } from 'utils/permissions';
 
 const columnHelper = createColumnHelper();
 
@@ -84,24 +85,32 @@ const ColumnHelperReport = (callback) => [
 
     minWidth: 150,
     cell: (info) => {
-      const { onView } = callback;
+      const { onAction, permissions } = callback;
+      const data = info.row.original;
+
+      const isAllowed = filterActionButtons('report:delete', permissions);
       return (
         <Fragment>
-          <Tooltip title="Download Excel">
+          {/* <Tooltip title="Download Excel">
             <IconButton size="small">
               <DifferenceIcon color="success" />
             </IconButton>
-          </Tooltip>
-          <Tooltip title="Download PDF">
+          </Tooltip> */}
+          <Tooltip
+            onClick={() => onAction('export', data)}
+            title="Download PDF"
+          >
             <IconButton size="small">
               <PictureAsPdfIcon color="error" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Hapus">
-            <IconButton size="small">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+          {isAllowed && (
+            <Tooltip title="Hapus">
+              <IconButton onClick={() => onAction('delete', data)} size="small">
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          )}
         </Fragment>
       );
     }

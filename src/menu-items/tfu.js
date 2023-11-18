@@ -23,29 +23,29 @@ const tfu = {
       url: '/tfu',
       icon: icons.IconBuildingCommunity,
       breadcrumbs: false
-    },
-    {
-      id: 'reports',
-      title: 'Laporan ',
-      type: 'collapse',
-      icon: icons.IconClipboardText,
-      children: [
-        {
-          id: 'report-recap',
-          title: 'Rekapitulasi TFU',
-          type: 'item',
-          url: '/tfu/report',
-          breadcrumbs: false
-        },
-        {
-          id: 'report',
-          title: 'Rekapitulasi',
-          type: 'item',
-          url: '/tfu/report/recap',
-          breadcrumbs: false
-        }
-      ]
     }
+    // {
+    //   id: 'reports',
+    //   title: 'Laporan ',
+    //   type: 'collapse',
+    //   icon: icons.IconClipboardText,
+    //   children: [
+    //     // {
+    //     //   id: 'report-recap',
+    //     //   title: 'Rekapitulasi TFU',
+    //     //   type: 'item',
+    //     //   url: '/tfu/report',
+    //     //   breadcrumbs: false
+    //     // },
+    //     {
+    //       id: 'report',
+    //       title: 'Rekapitulasi',
+    //       type: 'item',
+    //       url: '/tfu/report',
+    //       breadcrumbs: false
+    //     }
+    //   ]
+    // }
   ]
 };
 
