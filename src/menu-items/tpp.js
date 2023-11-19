@@ -23,22 +23,22 @@ const tpp = {
       url: '/tpp',
       icon: icons.IconBuildingCommunity,
       breadcrumbs: false
-    },
-    {
-      id: 'reports',
-      title: 'Laporan ',
-      type: 'collapse',
-      icon: icons.IconClipboardText,
-      children: [
-        {
-          id: 'report',
-          title: 'Rekapitulasi',
-          type: 'item',
-          url: '/tpp/report',
-          breadcrumbs: false
-        }
-      ]
     }
+    // {
+    //   id: 'reports',
+    //   title: 'Laporan ',
+    //   type: 'collapse',
+    //   icon: icons.IconClipboardText,
+    //   children: [
+    //     {
+    //       id: 'report',
+    //       title: 'Rekapitulasi',
+    //       type: 'item',
+    //       url: '/tpp/report',
+    //       breadcrumbs: false
+    //     }
+    //   ]
+    // }
   ]
 };
 
