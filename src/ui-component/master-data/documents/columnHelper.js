@@ -6,12 +6,16 @@ import {
   Typography,
   Box,
   IconButton,
-  Tooltip
+  Tooltip,
+  Link
 } from '@mui/material';
 
 // icons
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DownloadIcon from '@mui/icons-material/Download';
+import { filterActionButtons } from 'utils/permissions';
+import StaticVar from 'config/StaticVar';
 
 const columnHelper = createColumnHelper();
 
@@ -68,26 +72,47 @@ const ColumnHelper = (callback) => [
     maxWidth: 160,
     minWidth: 120,
     cell: ({ row }) => {
-      const { onAction } = callback;
+      const { onAction, userPermission } = callback;
+
+      const isAllowed = (permission) => {
+        return filterActionButtons(permission, userPermission);
+      };
       // console.log('row', row.original);
       return (
         <Fragment>
-          <Tooltip title="Edit">
+          <Tooltip title="Download File">
             <IconButton
-              onClick={() => onAction('edit', row.original)}
+              LinkComponent={Link}
+              href={`${StaticVar.URL_API}/document/download/${row.original.filename}`}
+              // onClick={() => onAction('download', row.original)}
               size="small"
+              color="success"
             >
-              <BorderColorIcon color="warning" />
+              <DownloadIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton
-              onClick={() => onAction('delete', row.original)}
-              size="small"
-            >
-              <DeleteIcon color="error" />
-            </IconButton>
-          </Tooltip>
+          {isAllowed('document:edit') && (
+            <Tooltip title="Edit">
+              <IconButton
+                onClick={() => onAction('edit', row.original)}
+                size="small"
+                color="warning"
+              >
+                <BorderColorIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          {isAllowed('document:delete') && (
+            <Tooltip title="Delete">
+              <IconButton
+                onClick={() => onAction('delete', row.original)}
+                size="small"
+                color="warning"
+              >
+                <DeleteIcon color="error" />
+              </IconButton>
+            </Tooltip>
+          )}
         </Fragment>
       );
     }

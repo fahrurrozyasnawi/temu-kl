@@ -39,9 +39,10 @@ api.interceptors.response.use(
     }
 
     if (error.code === 'ERR_NETWORK') {
+      console.log('error data', error);
       toast.error(error.code);
-      removeToken();
-      window.location.href = '/login?expired';
+      // removeToken();
+      // window.location.href = '/login?expired';
     }
 
     return Promise.reject(error);
@@ -155,6 +156,8 @@ const deleteHealthyHouseAssement = (id) =>
 
 // documents api
 const getDocuments = (params) => api.get(`/document`, { params });
+const downloadDocument = (filename, params) =>
+  api.get(`/document/download/${filename}`, { params });
 const getOneDocument = (id, params) => api.get(`/document/${id}`, { params });
 const postDocument = (data, params) => api.post('/document', data, { params });
 const putDocument = (id, data) => api.put(`/document/${id}`, data);
@@ -266,6 +269,7 @@ const API = {
   postDocument,
   putDocument,
   deleteDocument,
+  downloadDocument,
   uploadDocument,
 
   getReports,
