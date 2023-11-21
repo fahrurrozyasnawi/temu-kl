@@ -8,7 +8,7 @@ const api = axios.create({
   // httpsAgent: new https.Agent({
   //   rejectUnauthorized: false
   // }),
-  insecureHTTPParser: true,
+  withCredentials: false,
   baseURL: StaticVar.URL_API,
   headers: {
     Authorization: `Bearer ${localStorage.getItem('token')}`

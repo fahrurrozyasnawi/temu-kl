@@ -46,7 +46,7 @@ const AuthProvider = (props) => {
       // httpsAgent: new https.Agent({
       //   rejectUnauthorized: false
       // }),
-      insecureHTTPParser: true,
+      withCredentials: false,
       baseURL: StaticVar.URL_API,
       method: 'post',
       data: data
