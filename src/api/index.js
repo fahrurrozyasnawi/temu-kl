@@ -44,9 +44,10 @@ api.interceptors.response.use(
     }
 
     if (error.code === 'ERR_NETWORK') {
+      console.log('error data', error);
       toast.error(error.code);
-      removeToken();
-      window.location.href = '/login?expired';
+      // removeToken();
+      // window.location.href = '/login?expired';
     }
 
     return Promise.reject(error);

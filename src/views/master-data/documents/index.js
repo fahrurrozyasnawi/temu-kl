@@ -1,5 +1,7 @@
 import { Box } from '@mui/material';
 import API from 'api';
+import StaticVar from 'config/StaticVar';
+import { AuthContext } from 'contexts/AuthContext';
 import { MasterDataContext } from 'contexts/MasterData';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -16,6 +18,7 @@ const Documents = () => {
 
   // context
   const { documents, getDocuments } = useContext(MasterDataContext);
+  const { dataUser } = useContext(AuthContext);
 
   // state
   const [openModal, setOpenModal] = useState({
@@ -125,6 +128,7 @@ const Documents = () => {
       <AddSections
         onClickAdd={() => handleClickAction('add')}
         options={options}
+        exclude="document:add"
         values={filterValue}
         onClickSearch={handleClickSearch}
         handleChange={handleChangeSections}
@@ -133,7 +137,8 @@ const Documents = () => {
         <CustomTable
           data={filteredData}
           columns={ColumnHelper({
-            onAction: handleClickAction
+            onAction: handleClickAction,
+            userPermission: dataUser?.permissions
           })}
         />
       </Box>
