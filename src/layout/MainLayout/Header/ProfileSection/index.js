@@ -44,7 +44,8 @@ import { AuthContext } from 'contexts/AuthContext';
 
 const ProfileSection = () => {
   // context
-  const { logout } = useContext(AuthContext);
+  const { logout, dataUser } = useContext(AuthContext);
+  console.log('data user', dataUser);
 
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
@@ -116,7 +117,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={User1}
+            // src={User1}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -179,10 +180,13 @@ const ProfileSection = () => {
                           variant="h4"
                           sx={{ fontWeight: 400 }}
                         >
-                          Johne Doe
+                          {dataUser?.name}
                         </Typography>
                       </Stack>
-                      <Typography variant="subtitle2">Project Admin</Typography>
+                      <Typography variant="subtitle2">
+                        {userAccess.find((i) => i.value === dataUser?.level)
+                          ?.label || '-'}
+                      </Typography>
                     </Stack>
                   </Box>
                   <Divider />
@@ -210,7 +214,7 @@ const ProfileSection = () => {
                           }
                         }}
                       >
-                        <ListItemButton
+                        {/* <ListItemButton
                           sx={{
                             borderRadius: `${customization.borderRadius}px`
                           }}
@@ -251,7 +255,7 @@ const ProfileSection = () => {
                               </Grid>
                             }
                           />
-                        </ListItemButton>
+                        </ListItemButton> */}
                         <ListItemButton
                           sx={{
                             borderRadius: `${customization.borderRadius}px`
@@ -280,5 +284,44 @@ const ProfileSection = () => {
     </>
   );
 };
+
+const userAccess = [
+  { label: 'Admin', value: 'admin', exclude: [] },
+  {
+    label: 'Putugas Psukesmas',
+    value: 'healthworker',
+    exclude: [
+      'user:add',
+      'user:delete',
+      'user:edit',
+      'puskesmas:add',
+      'puskesmas:edit',
+      'puskesmas:delete'
+    ]
+  },
+  {
+    label: 'Kader',
+    value: 'cadre',
+    exclude: [
+      'user:all',
+      'user:add',
+      'user:activate',
+      'user:delete',
+      'user:edit',
+      'puskesmas:add',
+      'puskesmas:edit',
+      'puskesmas:delete',
+      'document:add',
+      'document:edit',
+      'document:delete',
+      'tfu:all',
+      'tpp:all',
+      'water:all',
+      'hh:all',
+      'sanitary:all',
+      'report:delete'
+    ]
+  }
+];
 
 export default ProfileSection;
