@@ -135,27 +135,42 @@ const Dashboard = () => {
           setDataTFU((prev) => ({
             ...prev,
             card: dataCardTFU,
-            chartData: chartDataTFU
+            chartData:
+              chartDataTFU?.label?.length > 0
+                ? chartDataTFU
+                : { label: [], data: [] }
           }));
           setDataTPP((prev) => ({
             ...prev,
             card: dataCardTPP,
-            chartData: chartDataTPP
+            chartData:
+              chartDataTPP?.label?.length > 0
+                ? chartDataTPP
+                : { label: [], data: [] }
           }));
           setDataWater((prev) => ({
             ...prev,
             card: dataCardWater,
-            chartData: chartDataWater
+            chartData:
+              chartDataWater?.label?.length > 0
+                ? chartDataWater
+                : { label: [], data: [] }
           }));
           setDataHealthyHouse((prev) => ({
             ...prev,
             card: dataCardHealthyHouse,
-            chartData: chartDataHealthyHouse
+            chartData:
+              chartDataHealthyHouse?.label?.length > 0
+                ? chartDataHealthyHouse
+                : { label: [], data: [] }
           }));
           setDataSanitary((prev) => ({
             ...prev,
             card: dataCardSanitary,
-            chartData: chartDataSanitary
+            chartData:
+              chartDataSanitary?.label?.length > 0
+                ? chartDataSanitary
+                : { label: [], data: [] }
           }));
 
           setLoading(false);
@@ -179,7 +194,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {dataWater.card.map((item, index) => (
+              {dataWater.card?.map((item, index) => (
                 <Grid item xs={3} key={index}>
                   <StatusCard
                     value={item.data}
@@ -215,7 +230,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {dataHealthyHouse.card.map((item, index) => (
+              {dataHealthyHouse.card?.map((item, index) => (
                 <Grid item xs={3} key={index}>
                   <StatusCard
                     value={item.data}
@@ -251,7 +266,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {dataTPP.card.map((item, index) => (
+              {dataTPP.card?.map((item, index) => (
                 <Grid item xs={3} key={index}>
                   <StatusCard
                     value={item.data}
@@ -307,7 +322,7 @@ const Dashboard = () => {
           </Grid> */}
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {dataTFU.card.map((item, index) => (
+              {dataTFU.card?.map((item, index) => (
                 <Grid item xs={3} key={index}>
                   <StatusCard
                     value={item.data}
@@ -343,7 +358,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              {dataSanitary.card.map((item, index) => (
+              {dataSanitary.card?.map((item, index) => (
                 <Grid item xs={3} key={index}>
                   <StatusCard
                     value={item.data}
