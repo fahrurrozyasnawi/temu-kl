@@ -2,8 +2,12 @@ import axios from 'axios';
 import StaticVar from 'config/StaticVar';
 import { toast } from 'react-hot-toast';
 import { removeToken } from 'utils/token';
+import https from 'https';
 
 const api = axios.create({
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false
+  }),
   baseURL: StaticVar.URL_API,
   headers: {
     Authorization: `Bearer ${localStorage.getItem('token')}`
