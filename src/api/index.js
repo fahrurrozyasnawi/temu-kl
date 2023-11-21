@@ -156,8 +156,6 @@ const deleteHealthyHouseAssement = (id) =>
 
 // documents api
 const getDocuments = (params) => api.get(`/document`, { params });
-const downloadDocument = (filename, params) =>
-  api.get(`/document/download/${filename}`, { params });
 const getOneDocument = (id, params) => api.get(`/document/${id}`, { params });
 const postDocument = (data, params) => api.post('/document', data, { params });
 const putDocument = (id, data) => api.put(`/document/${id}`, data);
@@ -269,7 +267,6 @@ const API = {
   postDocument,
   putDocument,
   deleteDocument,
-  downloadDocument,
   uploadDocument,
 
   getReports,
