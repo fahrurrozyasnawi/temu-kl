@@ -4,7 +4,7 @@ import StaticVar from 'config/StaticVar';
 import { removeToken } from 'utils/token';
 import { decodeToken, isExpired } from 'react-jwt';
 import API from 'api';
-import https from 'https';
+// import https from 'https';
 
 export const AuthContext = createContext({});
 
@@ -43,9 +43,10 @@ const AuthProvider = (props) => {
     // console.log("data", data);
     await axios({
       url: '/auth/login',
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false
-      }),
+      // httpsAgent: new https.Agent({
+      //   rejectUnauthorized: false
+      // }),
+      insecureHTTPParser: true,
       baseURL: StaticVar.URL_API,
       method: 'post',
       data: data
