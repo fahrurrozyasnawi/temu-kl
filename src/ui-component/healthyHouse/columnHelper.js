@@ -35,9 +35,13 @@ const ColumnHelper = (callback) => [
     header: 'Status',
     cell: (info) => {
       let color = 'grey';
-      const value = info.getValue().toLowerCase();
+      let value = '';
+      // console.log('value', info.getValue());
+
+      if (info.getValue()) {
+        value = info.getValue().toLowerCase();
+      }
       // const value = info.getValue();
-      // console.log('value', value);
 
       switch (value) {
         case 'resiko rendah':

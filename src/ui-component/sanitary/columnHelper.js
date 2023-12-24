@@ -35,7 +35,11 @@ const ColumnHelper = (callback) => [
     header: 'Status',
     cell: (info) => {
       let color = 'grey';
-      const value = info.getValue();
+      let value = '';
+
+      if (info.getValue()) {
+        value = info.getValue();
+      }
 
       switch (value) {
         case 'Resiko Rendah':
