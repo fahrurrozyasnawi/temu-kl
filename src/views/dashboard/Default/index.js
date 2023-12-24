@@ -172,13 +172,16 @@ const Dashboard = () => {
                 ? chartDataSanitary
                 : { label: [], data: [] }
           }));
-
-          setLoading(false);
         })
         .catch((err) => console.log('err', err));
     };
 
-    fetchData();
+    const getData = () => {
+      fetchData();
+      setLoading(false);
+    };
+
+    getData();
   }, []);
 
   return (
