@@ -38,7 +38,7 @@ const TotalGrowthBarChart = ({ isLoading, title, data }) => {
   const options = {
     chart: {
       id: 'bar-chart',
-      stacked: true,
+      // stacked: false,
       toolbar: {
         show: true
       },
@@ -100,7 +100,7 @@ const TotalGrowthBarChart = ({ isLoading, title, data }) => {
 
   useEffect(() => {
     const newChartData = {
-      ...chartData.options,
+      ...options,
       colors: [primaryDark, secondaryMain, primary200, secondaryLight],
       xaxis: {
         labels: {
