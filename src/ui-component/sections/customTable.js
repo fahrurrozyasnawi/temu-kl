@@ -42,7 +42,6 @@ const CustomTable = ({
 
   if (useServerSidePagination) {
     options = {
-      pageCount: totalPages,
       onPaginationChange,
       manualPagination: true,
       pageCount
@@ -73,8 +72,8 @@ const CustomTable = ({
 
   return (
     <Card sx={{ p: 2 }}>
-      <TableContainer>
-        <PerfectScrollbar style={{ maxHeight: 1200, minHeight: 500 }}>
+      <PerfectScrollbar style={{ maxHeight: 1200, minHeight: 500 }}>
+        <TableContainer>
           <Table>
             <TableHead>
               {getHeaderGroups().map((headerGroup) => (
@@ -124,40 +123,38 @@ const CustomTable = ({
               ))}
             </TableHead>
             <TableBody>
-              {getRowModel()
-                .rows.slice(0, 10)
-                .map((row) => {
-                  return (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <TableCell
-                            key={cell.id}
-                            sx={{
-                              '&:last-of-type': {
-                                textAlign: 'right'
-                                // paddingRight: '24px'
-                              }
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+              {getRowModel().rows.map((row) => {
+                return (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          sx={{
+                            '&:last-of-type': {
+                              textAlign: 'right'
+                              // paddingRight: '24px'
+                            }
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
-        </PerfectScrollbar>
-      </TableContainer>
+        </TableContainer>
+      </PerfectScrollbar>
 
       <TablePagination
         component="div"
-        rowsPerPageOptions={[5, 10, 15]}
+        rowsPerPageOptions={[5, 10, 20]}
         count={getPageCount()}
         rowsPerPage={getState().pagination.pageSize}
         page={getState().pagination.pageIndex}
@@ -177,7 +174,7 @@ CustomTable.propTypes = {
   useServerSidePagination: PropTypes.bool,
   pageCount: PropTypes.number,
   pagination: PropTypes.object,
-  onPaginationChange: PropTypes.any
+  onPaginationChange: PropTypes.func
 };
 
 export default CustomTable;

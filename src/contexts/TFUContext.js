@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useState } from 'react';
 export const TFUContext = createContext({});
 
 const TFUProvider = (props) => {
+  const [totalPages, setTotalPages] = useState(0);
   const [dataTFU, setDataTFU] = useState({});
   const [dataTFUAssesment, setDataTFUAssesment] = useState({});
   const [tfus, setTfus] = useState([]);
@@ -46,9 +47,10 @@ const TFUProvider = (props) => {
   const getTFUs = useCallback(async (params) => {
     await API.getTFUs(params)
       .then((res) => {
-        const { data } = res.data;
+        const { data, totalPages } = res.data;
 
         // console.log('data', data);
+        setTotalPages(totalPages);
         setTfus(data);
       })
       .catch((err) => console.log('err data tfu', err));
@@ -73,6 +75,7 @@ const TFUProvider = (props) => {
         tfuAssesments,
         dataTFUAssesment,
         reports,
+        totalPages,
 
         getReports,
         getDataTFUAssesment,

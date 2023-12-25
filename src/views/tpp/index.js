@@ -14,12 +14,14 @@ import { getNestedProperty } from 'utils/generator';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import usePagination from 'hooks/usePagination';
+import useSearch from 'hooks/useSearch';
 
 const TFU = () => {
   const navigate = useNavigate();
 
   // context
-  const { getTPPs, tpps } = useContext(TPPContext);
+  const { getTPPs, tpps, totalPages } = useContext(TPPContext);
 
   const [openModal, setOpenModal] = useState({
     open: false,
@@ -28,70 +30,42 @@ const TFU = () => {
   });
   const [updateState, setUpdateState] = useState(false);
   const [dataRow, setDataRow] = useState(null);
-  const [filterValue, setFilterValue] = useState({
-    search: '',
-    query: 'name',
-    isSearch: false
-  });
-  const [filteredData, setFilteredData] = useState(tpps);
   const [deleteModal, setDeleteModal] = useState({
     open: false,
     text: '',
     id: ''
   });
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('name');
+
   // use effect
   useEffect(() => {
-    const fetchData = async () => {
-      await getTPPs();
+    const fetchData = async (params = {}) => {
+      await getTPPs(params);
     };
 
-    fetchData();
+    fetchData({ pageIndex, pageSize, search, query });
 
-    return () => {};
-  }, [updateState]);
+    // return () => {};
+  }, [updateState, pageIndex, pageSize, isSearch]);
 
   const handleClose = async () => {
     setDeleteModal({ open: false, text: '', id: '' });
     setOpenModal({ open: false, edit: false, preview: false });
     setDataRow(null);
   };
-
-  const handleChangeSections = (type, value) => {
-    if (type === 'text') {
-      setFilterValue((prev) => ({ ...prev, search: value }));
-    }
-
-    if (type === 'query') {
-      setFilterValue((prev) => ({ ...prev, query: value }));
-    }
-  };
-
-  const handleClickSearch = () => {
-    setFilterValue((prev) => ({ ...prev, isSearch: !prev.isSearch }));
-  };
-
-  useEffect(() => {
-    if (filterValue.isSearch) {
-      if (filterValue.search.length > 0) {
-        const searchResult = tpps.filter((item) => {
-          const value = getNestedProperty(item, filterValue.query);
-          return (
-            value &&
-            value
-              .toString()
-              .toLocaleLowerCase()
-              .match(filterValue.search.toString().toLowerCase())
-          );
-        });
-        setFilteredData(searchResult);
-      } else {
-        setFilteredData(tpps);
-      }
-    } else {
-      setFilteredData(tpps);
-    }
-  }, [tpps, filterValue.search, filterValue.query, filterValue.isSearch]);
 
   // console.log('tpps', tpps);
   const handleClickAction = (type, row) => {
@@ -139,16 +113,20 @@ const TFU = () => {
       <AddSections
         onClickAdd={() => handleClickAction('add')}
         options={options}
-        values={filterValue}
-        onClickSearch={handleClickSearch}
-        handleChange={handleChangeSections}
+        values={filterValues}
+        onClickSearch={setSearch}
+        handleChange={handleSearchChange}
       />
       <Box mt={2}>
         <CustomTable
-          data={filteredData}
+          data={tpps}
           columns={ColumnHelper({
             onAction: handleClickAction
           })}
+          useServerSidePagination
+          pageCount={totalPages}
+          pagination={pagination}
+          onPaginationChange={onPaginationChange}
         />
       </Box>
 

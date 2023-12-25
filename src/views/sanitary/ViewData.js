@@ -18,6 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { SanitaryContext } from 'contexts/SanitaryContext';
 import { getNestedProperty } from 'utils/generator';
 import { Close } from '@mui/icons-material';
+import usePagination from 'hooks/usePagination';
 // import { sanitaryTypes } from 'utils/assesments/sanitary';
 
 const ViewData = () => {
@@ -25,6 +26,7 @@ const ViewData = () => {
   const { _id } = useParams();
 
   const {
+    totalPages,
     dataSanitary,
     getDataSanitary,
     sanitaryAssesments,
@@ -39,17 +41,21 @@ const ViewData = () => {
   });
   const [filteredData, setFilteredData] = useState(sanitaryAssesments);
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (params = {}) => {
       await getDataSanitary(_id);
-      await getSanitaryAssements({ sanitary: _id });
+      await getSanitaryAssements({ sanitary: _id, ...params });
     };
 
-    fetchData();
-    return () => {
-      fetchData();
-    };
-  }, []);
+    fetchData({ pageIndex, pageSize });
+    // return () => {
+    //   fetchData();
+    // };
+  }, [pageIndex, pageSize]);
 
   const handleActions = (type, row) => {
     switch (type) {
@@ -202,6 +208,10 @@ const ViewData = () => {
               <CustomTable
                 data={filteredData}
                 columns={ColumnHelperView({ onAction: handleActions })}
+                useServerSidePagination
+                pageCount={totalPages}
+                pagination={pagination}
+                onPaginationChange={onPaginationChange}
               />
             </Grid>
           </Grid>

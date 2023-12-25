@@ -1,7 +1,7 @@
 import { Box, Card } from '@mui/material';
 import { TFUContext } from 'contexts/TFUContext';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import DeleteDialog from 'ui-component/components/deleteDialog';
 import AddSections from 'ui-component/sections/AddSections';
 import ColumnHelper from 'ui-component/tfu/columnHelper';
@@ -14,12 +14,16 @@ import { getNestedProperty } from 'utils/generator';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import usePagination from 'hooks/usePagination';
+import useSearch from 'hooks/useSearch';
 
 const TFU = () => {
+  // query params
+  // const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   // context
-  const { getTFUs, tfus } = useContext(TFUContext);
+  const { getTFUs, tfus, totalPages } = useContext(TFUContext);
 
   const [openModal, setOpenModal] = useState({
     open: false,
@@ -28,70 +32,43 @@ const TFU = () => {
   });
   const [updateState, setUpdateState] = useState(false);
   const [dataRow, setDataRow] = useState(null);
-  const [filterValue, setFilterValue] = useState({
-    search: '',
-    query: 'name',
-    isSearch: false
-  });
-  const [filteredData, setFilteredData] = useState(tfus);
   const [deleteModal, setDeleteModal] = useState({
     open: false,
     text: '',
     id: ''
   });
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('name');
+
   // use effect
   useEffect(() => {
-    const fetchData = async () => {
-      await getTFUs();
+    const fetchData = async (params = {}) => {
+      await getTFUs(params);
     };
 
-    fetchData();
+    console.log('running');
+    fetchData({ pageIndex, pageSize, search, query });
 
-    return () => {};
-  }, [updateState]);
+    // return () => {};
+  }, [updateState, pageIndex, pageSize, isSearch]);
 
   const handleClose = async () => {
     setDeleteModal({ open: false, text: '', id: '' });
     setOpenModal({ open: false, edit: false, preview: false });
     setDataRow(null);
   };
-
-  const handleChangeSections = (type, value) => {
-    if (type === 'text') {
-      setFilterValue((prev) => ({ ...prev, search: value }));
-    }
-
-    if (type === 'query') {
-      setFilterValue((prev) => ({ ...prev, query: value }));
-    }
-  };
-
-  const handleClickSearch = () => {
-    setFilterValue((prev) => ({ ...prev, isSearch: !prev.isSearch }));
-  };
-
-  useEffect(() => {
-    if (filterValue.isSearch) {
-      if (filterValue.search.length > 0) {
-        const searchResult = tfus.filter((item) => {
-          const value = getNestedProperty(item, filterValue.query);
-          return (
-            value &&
-            value
-              .toString()
-              .toLocaleLowerCase()
-              .match(filterValue.search.toString().toLowerCase())
-          );
-        });
-        setFilteredData(searchResult);
-      } else {
-        setFilteredData(tfus);
-      }
-    } else {
-      setFilteredData(tfus);
-    }
-  }, [tfus, filterValue.search, filterValue.query, filterValue.isSearch]);
 
   // console.log('tfus', tfus);
   const handleClickAction = (type, row) => {
@@ -139,16 +116,20 @@ const TFU = () => {
       <AddSections
         onClickAdd={() => handleClickAction('add')}
         options={options}
-        values={filterValue}
-        onClickSearch={handleClickSearch}
-        handleChange={handleChangeSections}
+        values={filterValues}
+        onClickSearch={setSearch}
+        handleChange={handleSearchChange}
       />
       <Box mt={2}>
         <CustomTable
-          data={filteredData}
+          data={tfus}
           columns={ColumnHelper({
             onAction: handleClickAction
           })}
+          useServerSidePagination={true}
+          pageCount={totalPages}
+          pagination={pagination}
+          onPaginationChange={onPaginationChange}
         />
       </Box>
 

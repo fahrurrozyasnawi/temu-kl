@@ -16,31 +16,35 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HealthyHouseContext } from 'contexts/HealthyHouseContext';
+import usePagination from 'hooks/usePagination';
 
 const ViewData = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
 
   const {
+    totalPages,
     dataHealthyHouse,
     getDataHealthyHouse,
     healthyHouseAssesments,
     getHealthyHouseAssements
   } = useContext(HealthyHouseContext);
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (params = {}) => {
       await getDataHealthyHouse(_id);
-      await getHealthyHouseAssements({ hh: _id });
+      await getHealthyHouseAssements({ hh: _id, ...params });
     };
 
-    fetchData();
-    return () => {
-      fetchData();
-    };
-  }, []);
-
-  console.log('data healthyHouse', healthyHouseAssesments);
+    fetchData({ pageIndex, pageSize });
+    // return () => {
+    //   fetchData();
+    // };
+  }, [pageIndex, pageSize]);
 
   return (
     <Grid container spacing={2} alignItems="center" justifyContent="center">
@@ -134,6 +138,10 @@ const ViewData = () => {
               <CustomTable
                 data={healthyHouseAssesments}
                 columns={ColumnHelperView({})}
+                useServerSidePagination
+                pageCount={totalPages}
+                pagination={pagination}
+                onPaginationChange={onPaginationChange}
               />
             </Grid>
           </Grid>

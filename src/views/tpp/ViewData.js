@@ -17,12 +17,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TPPContext } from 'contexts/TPPContext';
 import DialogFormPrint from './form print/Assesments';
+import usePagination from 'hooks/usePagination';
 
 const ViewData = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
 
   const {
+    totalPages,
     dataTPP,
     getDataTPP,
     getDataTPPAssesment,
@@ -33,17 +35,21 @@ const ViewData = () => {
   // state
   const [openPrint, setOpenPrint] = useState(false);
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (params = {}) => {
       await getDataTPP(_id);
-      await getTPPAssements({ tpp: _id });
+      await getTPPAssements({ tpp: _id, ...params });
     };
 
-    fetchData();
-    return () => {
-      fetchData();
-    };
-  }, []);
+    fetchData({ pageIndex, pageSize });
+    // return () => {
+    //   fetchData();
+    // };
+  }, [pageIndex, pageSize]);
 
   const handleActions = (type, data) => {
     switch (type) {
@@ -156,6 +162,10 @@ const ViewData = () => {
                 <CustomTable
                   data={tppAssesments}
                   columns={ColumnHelperView({ onAction: handleActions })}
+                  useServerSidePagination
+                  pageCount={totalPages}
+                  pagination={pagination}
+                  onPaginationChange={onPaginationChange}
                 />
               </Grid>
             </Grid>

@@ -14,12 +14,14 @@ import { getNestedProperty } from 'utils/generator';
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { MasterDataContext } from 'contexts/MasterData';
+import usePagination from 'hooks/usePagination';
+import useSearch from 'hooks/useSearch';
 
 const Sanitary = () => {
   const navigate = useNavigate();
 
   // context
-  const { getSanitaries, sanitaries } = useContext(SanitaryContext);
+  const { getSanitaries, sanitaries, totalPages } = useContext(SanitaryContext);
   const { getPublicHealths } = useContext(MasterDataContext);
 
   const [openModal, setOpenModal] = useState({
@@ -29,73 +31,45 @@ const Sanitary = () => {
   });
   const [updateState, setUpdateState] = useState(false);
   const [dataRow, setDataRow] = useState(null);
-  const [filterValue, setFilterValue] = useState({
-    search: '',
-    query: 'name',
-    isSearch: false
-  });
-  const [filteredData, setFilteredData] = useState(sanitaries);
   const [deleteModal, setDeleteModal] = useState({
     open: false,
     text: '',
     id: ''
   });
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('name');
+
   // use effect
   useEffect(() => {
-    const fetchData = async () => {
-      await getSanitaries();
+    const fetchData = async (params = {}) => {
+      await getSanitaries(params);
       await getPublicHealths();
     };
 
-    fetchData();
+    fetchData({ pageIndex, pageSize, search, query });
 
-    return () => {
-      fetchData();
-    };
-  }, [updateState]);
+    // return () => {
+    //   fetchData();
+    // };
+  }, [updateState, pageIndex, pageSize, isSearch]);
 
   const handleClose = async () => {
     setDeleteModal({ open: false, text: '', id: '' });
     setOpenModal({ open: false, edit: false, preview: false });
     setDataRow(null);
   };
-
-  const handleChangeSections = (type, value) => {
-    if (type === 'text') {
-      setFilterValue((prev) => ({ ...prev, search: value }));
-    }
-
-    if (type === 'query') {
-      setFilterValue((prev) => ({ ...prev, query: value }));
-    }
-  };
-
-  const handleClickSearch = () => {
-    setFilterValue((prev) => ({ ...prev, isSearch: !prev.isSearch }));
-  };
-
-  useEffect(() => {
-    if (filterValue.isSearch) {
-      if (filterValue.search.length > 0) {
-        const searchResult = sanitaries.filter((item) => {
-          const value = getNestedProperty(item, filterValue.query);
-          return (
-            value &&
-            value
-              .toString()
-              .toLocaleLowerCase()
-              .match(filterValue.search.toString().toLowerCase())
-          );
-        });
-        setFilteredData(searchResult);
-      } else {
-        setFilteredData(sanitaries);
-      }
-    } else {
-      setFilteredData(sanitaries);
-    }
-  }, [sanitaries, filterValue.search, filterValue.query, filterValue.isSearch]);
 
   // console.log('sanitaries', sanitaries);
   const handleClickAction = (type, row) => {
@@ -148,16 +122,20 @@ const Sanitary = () => {
       <AddSections
         onClickAdd={() => handleClickAction('add')}
         options={options}
-        values={filterValue}
-        onClickSearch={handleClickSearch}
-        handleChange={handleChangeSections}
+        values={filterValues}
+        onClickSearch={setSearch}
+        handleChange={handleSearchChange}
       />
       <Box mt={2}>
         <CustomTable
-          data={filteredData}
+          data={sanitaries}
           columns={ColumnHelper({
             onAction: handleClickAction
           })}
+          useServerSidePagination
+          pageCount={totalPages}
+          pagination={pagination}
+          onPaginationChange={onPaginationChange}
         />
       </Box>
 

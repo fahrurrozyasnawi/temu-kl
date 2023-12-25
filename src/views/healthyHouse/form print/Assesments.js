@@ -23,7 +23,7 @@ import { getLabel } from 'utils/generator';
 const DialogFormPrint = ({ open, onClose }) => {
   const { dataTPPAssesment } = useContext(TPPContext);
 
-  console.log('data tpp assesment', dataTPPAssesment);
+  console.log('data hh assesment', dataTPPAssesment);
 
   const componentRef = useRef();
 
@@ -64,34 +64,23 @@ const FormAssesmentsPrint = forwardRef(({ data }, ref) => {
               textAlign="center"
               variant="h4"
             >
-              {`LAPORAN HASIL INSPEKSI  KESEHATAN LINGKUNGAN ${data?.tpp?.type}`}
+              {`LAPORAN HASIL INSPEKSI SANITASI ${data?.hh?.type}`}
             </Typography>
           </Grid>
 
           {/* base form */}
           <Grid item xs={4}>
-            <Typography variant="h6">{`Nama ${data?.tpp?.type}`}</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <Typography>: {data?.tpp?.name}</Typography>
+            <Typography variant="h6">{`Nama ${data?.hh?.type}`}</Typography>
           </Grid>
           <Grid item xs={4}>
-            <Typography variant="h6">Pemilik</Typography>
+            <Typography variant="h6">
+              {data?.hh?.type === 'Sanitasi Rumah Sehat'
+                ? 'Nama KK'
+                : 'Nama Pemilik Sarana'}
+            </Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography>: {data?.owner}</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="h6">Jumlah Penjamah</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <Typography>: {data?.tpp?.nHandler}</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="h6">Golongan</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <Typography>: {data?.tpp?.type}</Typography>
+            <Typography>: {data?.hh?.name}</Typography>
           </Grid>
           <Grid item xs={4}>
             <Typography variant="h6">Alamat</Typography>
@@ -99,14 +88,28 @@ const FormAssesmentsPrint = forwardRef(({ data }, ref) => {
           <Grid item xs={8}>
             <Typography>: {data?.address}</Typography>
           </Grid>
+          {data?.hh?.type === 'Sanitasi Rumah Sehat' ? (
+            <Fragment>
+              <Grid item xs={4}>
+                <Typography variant="h6">Alamat</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <Typography>: {data?.address}</Typography>
+              </Grid>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Grid item xs={4}>
+                <Typography variant="h6">Alamat</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <Typography>: {data?.address}</Typography>
+              </Grid>
+            </Fragment>
+          )}
+
           <Grid item xs={4}>
-            <Typography variant="h6">NIB</Typography>
-          </Grid>
-          <Grid item xs={8}>
-            <Typography>: {data?.NIB}</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="h6">Tanggal</Typography>
+            <Typography variant="h6">Tanggal Kunjugan/Pemeriksaan</Typography>
           </Grid>
           <Grid item xs={8}>
             <Typography>
