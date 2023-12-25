@@ -18,11 +18,6 @@ import {
 } from '@tabler/icons-react';
 
 // project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-import TotalIncomeDarkCard from './TotalIncomeDarkCard';
-import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
 import TitleCard from 'ui-component/cards/TitleCard';
@@ -30,19 +25,6 @@ import StatusCard from 'ui-component/cards/StatusCard';
 import API from 'api';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
-
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-  height: 10,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor:
-      theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800]
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'
-  }
-}));
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);

@@ -4,6 +4,7 @@ import { createContext, useCallback, useState } from 'react';
 export const SanitaryContext = createContext({});
 
 const SanitaryProvider = (props) => {
+  const [totalPages, setTotalPages] = useState(0);
   const [dataSanitary, setDataSanitary] = useState({});
   const [dataSanitaryAssesment, setDataSanitaryAssesment] = useState({});
   const [sanitaries, setSanitaries] = useState([]);
@@ -23,9 +24,10 @@ const SanitaryProvider = (props) => {
   const getSanitaryAssements = useCallback(async (params) => {
     await API.getSanitaryAssements(params)
       .then((res) => {
-        const { data } = res.data;
+        const { data, totalPages } = res.data;
 
         // console.log('data', data);
+        setTotalPages(totalPages);
         setSanitaryAssesments(data);
       })
       .catch((err) => console.log('err data sanitary', err));
@@ -45,9 +47,10 @@ const SanitaryProvider = (props) => {
   const getSanitaries = useCallback(async (params) => {
     await API.getSanitaries(params)
       .then((res) => {
-        const { data } = res.data;
+        const { data, totalPages } = res.data;
 
         // console.log('data', data);
+        setTotalPages(totalPages);
         setSanitaries(data);
       })
       .catch((err) => console.log('err data sanitary', err));
@@ -60,6 +63,8 @@ const SanitaryProvider = (props) => {
         sanitaries,
         sanitaryAssesments,
         dataSanitaryAssesment,
+        totalPages,
+
         getDataSanitaryAssement,
         getDataSanitary,
         getSanitaries,

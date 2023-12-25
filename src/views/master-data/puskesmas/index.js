@@ -57,13 +57,7 @@ const Puskesmas = () => {
   };
 
   const handleChangeSections = (type, value) => {
-    if (type === 'text') {
-      setFilterValue((prev) => ({ ...prev, search: value }));
-    }
-
-    if (type === 'query') {
-      setFilterValue((prev) => ({ ...prev, query: value }));
-    }
+    setFilterValue((prev) => ({ ...prev, [type]: value }));
   };
 
   const handleClickSearch = () => {

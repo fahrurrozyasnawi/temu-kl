@@ -72,7 +72,6 @@ const ColumnHelper = (callback) => [
     minWidth: 120,
     cell: ({ row }) => {
       const { onAction } = callback;
-      console.log('row', row.original);
       return (
         <Fragment>
           <Tooltip title="Detail">

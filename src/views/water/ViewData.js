@@ -18,12 +18,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { WaterContext } from 'contexts/WaterContext';
 import { waterTypes } from 'utils/assesments/water';
 import DialogFormPrint from './form print/Assesments';
+import usePagination from 'hooks/usePagination';
 
 const ViewData = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
 
   const {
+    totalPages,
     dataWater,
     getDataWater,
     getDataWaterAssesment,
@@ -33,18 +35,21 @@ const ViewData = () => {
 
   // state
   const [openPrint, setOpenPrint] = useState(false);
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (params = {}) => {
       await getDataWater(_id);
-      await getWaterAssements({ water: _id });
+      await getWaterAssements({ water: _id, ...params });
     };
 
-    fetchData();
-    return () => {
-      fetchData();
-    };
-  }, []);
+    fetchData({ pageIndex, pageSize });
+    // return () => {
+    //   fetchData();
+    // };
+  }, [pageIndex, pageSize]);
 
   const handleActions = (type, data) => {
     switch (type) {
@@ -159,6 +164,10 @@ const ViewData = () => {
                 <CustomTable
                   data={waterAssesments}
                   columns={ColumnHelperView({ onAction: handleActions })}
+                  useServerSidePagination
+                  pageCount={totalPages}
+                  pagination={pagination}
+                  onPaginationChange={onPaginationChange}
                 />
               </Grid>
             </Grid>

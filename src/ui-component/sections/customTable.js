@@ -1,8 +1,10 @@
+import PropTypes from 'prop-types';
 import React, { Fragment, useMemo, useState } from 'react';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable
@@ -15,31 +17,63 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow
 } from '@mui/material';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-const CustomTable = ({ data, columns }) => {
+const CustomTable = ({
+  data,
+  columns,
+  useServerSidePagination = false,
+  pagination,
+  pageCount = -1,
+  onPaginationChange
+}) => {
   const tableData = useMemo(() => data, [data]);
   const columnData = useMemo(() => columns, [columns]);
 
+  let options = {
+    getPaginationRowModel: getPaginationRowModel(),
+    pageCount: tableData.length
+  };
+
+  if (useServerSidePagination) {
+    options = {
+      onPaginationChange,
+      manualPagination: true,
+      pageCount
+    };
+  }
+
   const [sorting, setSorting] = useState([]);
-  const { getHeaderGroups, getRowModel } = useReactTable({
+  const {
+    getHeaderGroups,
+    getRowModel,
+    getState,
+    setPageIndex,
+    setPageSize,
+    getPageCount
+  } = useReactTable({
     data: tableData,
     columns: columnData,
     state: {
-      sorting
+      sorting,
+      ...(useServerSidePagination && {
+        pagination
+      })
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    ...options
   });
+
   return (
     <Card sx={{ p: 2 }}>
-      <TableContainer>
-        <PerfectScrollbar style={{ maxHeight: 1200, minHeight: 500 }}>
+      <PerfectScrollbar style={{ maxHeight: 1200, minHeight: 500 }}>
+        <TableContainer>
           <Table>
             <TableHead>
               {getHeaderGroups().map((headerGroup) => (
@@ -89,38 +123,58 @@ const CustomTable = ({ data, columns }) => {
               ))}
             </TableHead>
             <TableBody>
-              {getRowModel()
-                .rows.slice(0, 10)
-                .map((row) => {
-                  return (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <TableCell
-                            key={cell.id}
-                            sx={{
-                              '&:last-of-type': {
-                                textAlign: 'right'
-                                // paddingRight: '24px'
-                              }
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+              {getRowModel().rows.map((row) => {
+                return (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          sx={{
+                            '&:last-of-type': {
+                              textAlign: 'right'
+                              // paddingRight: '24px'
+                            }
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
-        </PerfectScrollbar>
-      </TableContainer>
+        </TableContainer>
+      </PerfectScrollbar>
+
+      <TablePagination
+        component="div"
+        rowsPerPageOptions={[5, 10, 20]}
+        count={getPageCount()}
+        rowsPerPage={getState().pagination.pageSize}
+        page={getState().pagination.pageIndex}
+        onPageChange={(_, page) => setPageIndex(page)}
+        onRowsPerPageChange={(e) => {
+          const size = e.target.value ? Number(e.target.value) : 10;
+          setPageSize(size);
+        }}
+      />
     </Card>
   );
+};
+
+CustomTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
+  useServerSidePagination: PropTypes.bool,
+  pageCount: PropTypes.number,
+  pagination: PropTypes.object,
+  onPaginationChange: PropTypes.func
 };
 
 export default CustomTable;

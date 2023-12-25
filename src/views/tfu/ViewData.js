@@ -17,12 +17,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TFUContext } from 'contexts/TFUContext';
 import DialogFormPrint from './form print/Assesments';
+import usePagination from 'hooks/usePagination';
 
 const ViewData = () => {
   const navigate = useNavigate();
   const { _id } = useParams();
 
   const {
+    totalPages,
     dataTFU,
     getDataTFU,
     getDataTFUAssesment,
@@ -33,17 +35,21 @@ const ViewData = () => {
   // state
   const [openPrint, setOpenPrint] = useState(false);
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (params = {}) => {
       await getDataTFU(_id);
-      await getTFUAssements({ tfu: _id });
+      await getTFUAssements({ tfu: _id, ...params });
     };
 
-    fetchData();
-    return () => {
-      fetchData();
-    };
-  }, []);
+    fetchData({ pageIndex, pageSize });
+    // return () => {
+    //   fetchData();
+    // };
+  }, [pageIndex, pageSize]);
 
   const handleActions = (type, data) => {
     switch (type) {
@@ -156,6 +162,10 @@ const ViewData = () => {
                 <CustomTable
                   data={tfuAssesments}
                   columns={ColumnHelperView({ onAction: handleActions })}
+                  useServerSidePagination
+                  pageCount={totalPages}
+                  pagination={pagination}
+                  onPaginationChange={onPaginationChange}
                 />
               </Grid>
             </Grid>

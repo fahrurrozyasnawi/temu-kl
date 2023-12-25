@@ -11,15 +11,15 @@ import AssesmentOffline from './AssesmentOffline';
 import API from 'api';
 import { toast } from 'react-hot-toast';
 import { getNestedProperty } from 'utils/generator';
-
-// third-party
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import usePagination from 'hooks/usePagination';
+import useSearch from 'hooks/useSearch';
 
 const HealthyHouse = () => {
   const navigate = useNavigate();
 
   // context
-  const { getHealthyHouses, healthyHouses } = useContext(HealthyHouseContext);
+  const { getHealthyHouses, healthyHouses, totalPages } =
+    useContext(HealthyHouseContext);
 
   const [openModal, setOpenModal] = useState({
     open: false,
@@ -28,77 +28,44 @@ const HealthyHouse = () => {
   });
   const [updateState, setUpdateState] = useState(false);
   const [dataRow, setDataRow] = useState(null);
-  const [filterValue, setFilterValue] = useState({
-    search: '',
-    query: 'name',
-    isSearch: false
-  });
-  const [filteredData, setFilteredData] = useState(healthyHouses);
   const [deleteModal, setDeleteModal] = useState({
     open: false,
     text: '',
     id: ''
   });
 
+  // pagination hooks
+  const { onPaginationChange, pagination, pageIndex, pageSize } =
+    usePagination();
+
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('name');
+
   // use effect
   useEffect(() => {
-    const fetchData = async () => {
-      await getHealthyHouses();
+    const fetchData = async (params = {}) => {
+      await getHealthyHouses(params);
     };
 
-    fetchData();
+    fetchData({ pageIndex, pageSize, search, query });
 
-    return () => {
-      fetchData();
-    };
-  }, [updateState]);
+    // return () => {
+    //   fetchData();
+    // };
+  }, [updateState, pageIndex, pageSize, isSearch]);
 
   const handleClose = async () => {
     setDeleteModal({ open: false, text: '', id: '' });
     setOpenModal({ open: false, edit: false, preview: false });
     setDataRow(null);
   };
-
-  const handleChangeSections = (type, value) => {
-    if (type === 'text') {
-      setFilterValue((prev) => ({ ...prev, search: value }));
-    }
-
-    if (type === 'query') {
-      setFilterValue((prev) => ({ ...prev, query: value }));
-    }
-  };
-
-  const handleClickSearch = () => {
-    setFilterValue((prev) => ({ ...prev, isSearch: !prev.isSearch }));
-  };
-
-  useEffect(() => {
-    if (filterValue.isSearch) {
-      if (filterValue.search.length > 0) {
-        const searchResult = healthyHouses.filter((item) => {
-          const value = getNestedProperty(item, filterValue.query);
-          return (
-            value &&
-            value
-              .toString()
-              .toLocaleLowerCase()
-              .match(filterValue.search.toString().toLowerCase())
-          );
-        });
-        setFilteredData(searchResult);
-      } else {
-        setFilteredData(healthyHouses);
-      }
-    } else {
-      setFilteredData(healthyHouses);
-    }
-  }, [
-    healthyHouses,
-    filterValue.search,
-    filterValue.query,
-    filterValue.isSearch
-  ]);
 
   const handleClickAction = (type, row) => {
     switch (type) {
@@ -150,16 +117,20 @@ const HealthyHouse = () => {
       <AddSections
         onClickAdd={() => handleClickAction('add')}
         options={options}
-        values={filterValue}
-        onClickSearch={handleClickSearch}
-        handleChange={handleChangeSections}
+        values={filterValues}
+        onClickSearch={setSearch}
+        handleChange={handleSearchChange}
       />
       <Box mt={2}>
         <CustomTable
-          data={filteredData}
+          data={healthyHouses}
           columns={ColumnHelper({
             onAction: handleClickAction
           })}
+          useServerSidePagination
+          pageCount={totalPages}
+          onPaginationChange={onPaginationChange}
+          pagination={pagination}
         />
       </Box>
 

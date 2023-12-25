@@ -34,7 +34,7 @@ const AddSections = ({
               label="Cari"
               name="search"
               value={values.search}
-              onChange={(e) => handleChange('text', e.target.value)}
+              onChange={(e) => handleChange('search', e.target.value)}
             />
             <TextField
               select
