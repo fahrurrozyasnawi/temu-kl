@@ -34,6 +34,7 @@ const AddSections = ({
               label="Cari"
               name="search"
               value={values.search}
+              disabled={values.isSearch}
               onChange={(e) => handleChange('search', e.target.value)}
             />
             <TextField
@@ -44,6 +45,7 @@ const AddSections = ({
                 native: true
               }}
               value={values.query}
+              disabled={values.isSearch}
               onChange={(e) => handleChange('query', e.target.value)}
             >
               <option value=""></option>
