@@ -13,10 +13,11 @@ import CustomTable from 'ui-component/sections/customTable';
 
 // icons
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HealthyHouseContext } from 'contexts/HealthyHouseContext';
 import usePagination from 'hooks/usePagination';
+import AssesmentSearch from 'ui-component/assesment-search';
+import useSearch from 'hooks/useSearch';
 
 const ViewData = () => {
   const navigate = useNavigate();
@@ -33,6 +34,15 @@ const ViewData = () => {
   // pagination hooks
   const { onPaginationChange, pagination, pageIndex, pageSize } =
     usePagination();
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('reviewer');
 
   useEffect(() => {
     const fetchData = async (params = {}) => {
@@ -40,11 +50,11 @@ const ViewData = () => {
       await getHealthyHouseAssements({ hh: _id, ...params });
     };
 
-    fetchData({ pageIndex, pageSize });
+    fetchData({ pageIndex, pageSize, search, query });
     // return () => {
     //   fetchData();
     // };
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, isSearch]);
 
   return (
     <Grid container spacing={2} alignItems="center" justifyContent="center">
@@ -124,14 +134,12 @@ const ViewData = () => {
             </Grid>
             <Grid item xs={12}>
               <Stack direction="row" gap={1} alignItems="center">
-                <TextField
-                  size="small"
-                  sx={{ minWidth: 250 }}
-                  placeholder="Cari"
+                <AssesmentSearch
+                  placeholder="Cari pemeriksa"
+                  searchValues={filterValues}
+                  onClickSearch={setSearch}
+                  onSearchChange={handleSearchChange}
                 />
-                <IconButton>
-                  <SearchIcon color="primary" />
-                </IconButton>
               </Stack>
             </Grid>
             <Grid item xs={12}>
