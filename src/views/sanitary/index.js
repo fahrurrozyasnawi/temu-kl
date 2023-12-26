@@ -49,7 +49,7 @@ const Sanitary = () => {
     setSearch,
     query,
     handleSearchChange
-  } = useSearch('name');
+  } = useSearch('name', onPaginationChange);
 
   // use effect
   useEffect(() => {

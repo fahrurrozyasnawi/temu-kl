@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const useSearch = (initialQuerySearch) => {
+const useSearch = (initialQuerySearch, resetPagination) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isSearch, setIsSearch] = useState(
     !!searchParams.get('search' || !!searchParams.get('query'))
@@ -20,6 +20,10 @@ const useSearch = (initialQuerySearch) => {
   }, []);
 
   const setSearch = () => {
+    if (!!resetPagination) {
+      resetPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }
+
     if (isSearch) {
       setFilterValue((prev) => ({ ...prev, search: '' }));
       setSearchParams();
@@ -40,7 +44,8 @@ const useSearch = (initialQuerySearch) => {
 };
 
 useSearch.propTypes = {
-  initialQuerySearch: PropTypes.string.isRequired
+  initialQuerySearch: PropTypes.string.isRequired,
+  resetPagination: PropTypes.func
 };
 
 export default useSearch;
