@@ -19,6 +19,8 @@ import { SanitaryContext } from 'contexts/SanitaryContext';
 import { getNestedProperty } from 'utils/generator';
 import { Close } from '@mui/icons-material';
 import usePagination from 'hooks/usePagination';
+import useSearch from 'hooks/useSearch';
+import AssesmentSearch from 'ui-component/assesment-search';
 // import { sanitaryTypes } from 'utils/assesments/sanitary';
 
 const ViewData = () => {
@@ -33,17 +35,19 @@ const ViewData = () => {
     getSanitaryAssements
   } = useContext(SanitaryContext);
 
-  // state
-  const [filterValue, setFilterValue] = useState({
-    search: '',
-    query: 'type',
-    isSearch: false
-  });
-  const [filteredData, setFilteredData] = useState(sanitaryAssesments);
-
   // pagination hooks
   const { onPaginationChange, pagination, pageIndex, pageSize } =
     usePagination();
+
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('reviewer');
 
   useEffect(() => {
     const fetchData = async (params = {}) => {
@@ -51,11 +55,11 @@ const ViewData = () => {
       await getSanitaryAssements({ sanitary: _id, ...params });
     };
 
-    fetchData({ pageIndex, pageSize });
+    fetchData({ pageIndex, pageSize, search, query });
     // return () => {
     //   fetchData();
     // };
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, isSearch]);
 
   const handleActions = (type, row) => {
     switch (type) {
@@ -70,42 +74,6 @@ const ViewData = () => {
         break;
     }
   };
-
-  const handleSearch = (value) => {
-    setFilterValue((prev) => ({ ...prev, search: value }));
-  };
-
-  const handleClickSearch = () => {
-    setFilterValue((prev) => ({ ...prev, isSearch: !prev.isSearch }));
-  };
-
-  useEffect(() => {
-    if (filterValue.isSearch) {
-      if (filterValue.search.length > 0) {
-        const searchResult = sanitaryAssesments.filter((item) => {
-          const value = getNestedProperty(item, filterValue.query);
-          return (
-            value &&
-            value
-              .toString()
-              .toLocaleLowerCase()
-              .match(filterValue.search.toString().toLowerCase())
-          );
-        });
-        setFilteredData(searchResult);
-      } else {
-        setFilteredData(sanitaryAssesments);
-      }
-    } else {
-      setFilteredData(sanitaryAssesments);
-    }
-  }, [
-    sanitaryAssesments,
-    filterValue.search,
-    filterValue.query,
-    filterValue.isSearch
-  ]);
-  // console.log('data sanitary', sanitaryAssesments);
 
   return (
     <Grid container spacing={2} alignItems="center" justifyContent="center">
@@ -189,24 +157,17 @@ const ViewData = () => {
             </Grid>
             <Grid item xs={12}>
               <Stack direction="row" gap={1} alignItems="center">
-                <TextField
-                  size="small"
-                  sx={{ minWidth: 250 }}
-                  placeholder="Cari"
-                  onChange={(e) => handleSearch(e.target.value)}
+                <AssesmentSearch
+                  placeholder="Cari pemeriksa"
+                  searchValues={filterValues}
+                  onClickSearch={setSearch}
+                  onSearchChange={handleSearchChange}
                 />
-                <IconButton onClick={() => handleClickSearch()}>
-                  {filterValue.isSearch ? (
-                    <Close />
-                  ) : (
-                    <SearchIcon color="primary" />
-                  )}
-                </IconButton>
               </Stack>
             </Grid>
             <Grid item xs={12}>
               <CustomTable
-                data={filteredData}
+                data={sanitaryAssesments}
                 columns={ColumnHelperView({ onAction: handleActions })}
                 useServerSidePagination
                 pageCount={totalPages}

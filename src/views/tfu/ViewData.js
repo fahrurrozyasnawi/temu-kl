@@ -18,6 +18,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { TFUContext } from 'contexts/TFUContext';
 import DialogFormPrint from './form print/Assesments';
 import usePagination from 'hooks/usePagination';
+import AssesmentSearch from 'ui-component/assesment-search';
+import useSearch from 'hooks/useSearch';
 
 const ViewData = () => {
   const navigate = useNavigate();
@@ -39,17 +41,27 @@ const ViewData = () => {
   const { onPaginationChange, pagination, pageIndex, pageSize } =
     usePagination();
 
+  // search hooks
+  const {
+    filterValues,
+    isSearch,
+    search,
+    setSearch,
+    query,
+    handleSearchChange
+  } = useSearch('reviewer');
+
   useEffect(() => {
     const fetchData = async (params = {}) => {
       await getDataTFU(_id);
       await getTFUAssements({ tfu: _id, ...params });
     };
 
-    fetchData({ pageIndex, pageSize });
+    fetchData({ pageIndex, pageSize, search, query });
     // return () => {
     //   fetchData();
     // };
-  }, [pageIndex, pageSize]);
+  }, [pageIndex, pageSize, isSearch]);
 
   const handleActions = (type, data) => {
     switch (type) {
@@ -148,14 +160,12 @@ const ViewData = () => {
               </Grid>
               <Grid item xs={12}>
                 <Stack direction="row" gap={1} alignItems="center">
-                  <TextField
-                    size="small"
-                    sx={{ minWidth: 250 }}
-                    placeholder="Cari"
+                  <AssesmentSearch
+                    placeholder="Cari pemeriksa"
+                    searchValues={filterValues}
+                    onClickSearch={setSearch}
+                    onSearchChange={handleSearchChange}
                   />
-                  <IconButton>
-                    <SearchIcon color="primary" />
-                  </IconButton>
                 </Stack>
               </Grid>
               <Grid item xs={12}>

@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 
 const useSearch = (initialQuerySearch) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isSearch, setIsSearch] = useState(false);
+  const [isSearch, setIsSearch] = useState(
+    !!searchParams.get('search' || !!searchParams.get('query'))
+  );
   const [filterValue, setFilterValue] = useState({
     search: searchParams.get('search') || '',
     query: searchParams.get('query') || initialQuerySearch
