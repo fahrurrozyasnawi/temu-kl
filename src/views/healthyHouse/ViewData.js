@@ -42,7 +42,7 @@ const ViewData = () => {
     setSearch,
     query,
     handleSearchChange
-  } = useSearch('reviewer');
+  } = useSearch('reviewer', onPaginationChange);
 
   useEffect(() => {
     const fetchData = async (params = {}) => {

@@ -46,7 +46,7 @@ const HealthyHouse = () => {
     setSearch,
     query,
     handleSearchChange
-  } = useSearch('name');
+  } = useSearch('name', onPaginationChange);
 
   // use effect
   useEffect(() => {
