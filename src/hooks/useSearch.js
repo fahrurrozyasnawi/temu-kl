@@ -6,43 +6,31 @@ import PropTypes from 'prop-types';
 const useSearch = (initialQuerySearch) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isSearch, setIsSearch] = useState(false);
-  const { search = '', query = initialQuerySearch } =
-    Object.fromEntries(searchParams);
+  const [filterValue, setFilterValue] = useState({
+    search: searchParams.get('search') || '',
+    query: searchParams.get('query') || initialQuerySearch
+  });
 
-  const filterValues = { search, query, isSearch };
-
-  // const debounceParams = useCallback(
-  //   debounce((newFilters) => {
-  //     setSearchParams(newFilters);
-  //   }, 300),
-  //   []
-  // );
+  const filterValues = { ...filterValue, isSearch };
 
   const handleSearchChange = useCallback((name, value) => {
-    const oldParams = Object.fromEntries(searchParams);
-    const newFilters = { ...oldParams, [name]: value };
-
-    // Exclude empty values
-    Object.keys(newFilters).forEach((key) => {
-      if (!newFilters[key]) {
-        delete newFilters[key];
-      }
-    });
-
-    setSearchParams(newFilters);
+    setFilterValue((prev) => ({ ...prev, [name]: value }));
   }, []);
 
   const setSearch = () => {
     if (isSearch) {
+      setFilterValue((prev) => ({ ...prev, search: '' }));
       setSearchParams();
+    } else {
+      setSearchParams(filterValue);
     }
     setIsSearch((prev) => !prev);
   };
 
   return {
     filterValues,
-    search,
-    query,
+    search: searchParams.get('search') || filterValue.search,
+    query: searchParams.get('query') || filterValue.query,
     handleSearchChange,
     isSearch,
     setSearch

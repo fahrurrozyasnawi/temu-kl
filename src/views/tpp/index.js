@@ -12,8 +12,6 @@ import API from 'api';
 import { toast } from 'react-hot-toast';
 import { getNestedProperty } from 'utils/generator';
 
-// third-party
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import usePagination from 'hooks/usePagination';
 import useSearch from 'hooks/useSearch';
 
